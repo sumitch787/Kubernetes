@@ -1,0 +1,64 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: sonar
+  name: sonarqube
+  labels: 
+    app: sonarqube
+    purpose: codequality
+spec:
+  replicas: 0
+  strategy: 
+    type: Recreate
+  selector: 
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+       name: sonarqube-app-pod
+       labels: 
+          app: sonarqube
+          purpose: codequality
+    spec:
+      serviceAccountName: sonarqube
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 20
+      containers:
+      -  image: sonarqube:9.2.4-community
+         imagePullPolicy: IfNotPresent
+         name: sonarqube-container
+         env:
+         - name: SONAR_JDBC_URL
+           value: jdbc:postgresql://postgres-svc-headless/sonarqube
+         - name: SONAR_WEB_JAVAOPTS
+           value: -Xmx1024m -XX:MaxPermSize=256m -XX:+HeapDumpOnOutOfMemoryError
+         - name: "SONAR_JDBC_USERNAME"
+           value: "sonarqube"
+         - name: "SONAR_JDBC_PASSWORD"
+           valueFrom: 
+            secretKeyRef:
+              key: password
+              name: postgres
+        #  resources:
+        #   requests:
+        #    cpu: 2500m
+        #    memory: 2.5Gi
+        #   limits:
+        #    cpu: 2500m
+        #    memory: 2.5Gi
+         ports:
+         - name: sonarqube-http 
+           containerPort: 9000
+           hostPort: 9000
+         volumeMounts:
+         - name: sonarqube-data
+           mountPath: "/opt/sonarqube/data"
+         - name: sonarqube-logs
+           mountPath: "/opt/sonarqube/logs"        
+      volumes:
+      - name: sonarqube-data
+        persistentVolumeClaim: 
+          claimName: sonarqube-data-pvc
+      - name: sonarqube-logs
+        persistentVolumeClaim:
+          claimName: sonarqube-logs-pvc

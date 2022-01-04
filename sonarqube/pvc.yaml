@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: sonar
+  name: sonarqube-data-pvc
+  labels:
+    app: sonarqube
+    purpose: codequality
+spec: 
+  accessModes:
+  - ReadWriteOnce
+  volumeName: sonarqube-data-pv
+  volumeMode: Filesystem
+  storageClassName: slow
+  selector:
+    matchLabels:
+       app: sonarqube
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: sonar
+  name: sonarqube-logs-pvc
+  labels:
+    app: sonarqube
+    purpose: codequality
+spec: 
+  accessModes:
+  - ReadWriteOnce
+  volumeName: sonarqube-logs-pv
+  volumeMode: Filesystem
+  storageClassName: slow
+  selector:
+    matchLabels:
+       app: sonarqube
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: sonar
+  name: postgres-data-pvc
+  labels:
+    app: sonarqube
+    purpose: codequality
+spec: 
+  accessModes:
+  - ReadWriteOnce
+  volumeName: postgres-data-pv
+  volumeMode: Filesystem
+  storageClassName: slow
+  selector:
+    matchLabels:
+       app: sonarqube
+  resources:
+    requests:
+      storage: 5Gi

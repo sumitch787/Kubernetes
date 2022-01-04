@@ -1,0 +1,64 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: sonar
+  name: postgres
+  labels: 
+    app: postgres
+    purpose: storage
+spec:
+  replicas: 1
+  strategy: 
+    type: Recreate
+  selector: 
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+       name: postgres-data-pod
+       labels: 
+          app: postgres
+          purpose: storage
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 20
+      containers:
+      -  image: postgres:9.6-bullseye
+         imagePullPolicy: IfNotPresent
+         name: postgres-container
+         env:
+         - name: "POSTGRES_USER"
+           value: sonarqube
+         - name: "POSTGRES_PASSWORD"
+           valueFrom: 
+            secretKeyRef:
+              key: password
+              name: postgres
+         - name: "POSTGRES_DB"
+           value: sonarqube 
+         - name: POSTGRES_HOST_AUTH_METHOD
+           value: md5
+         resources:
+          requests:
+            cpu: 500m
+            memory: 600Mi
+          limits:
+            cpu: 500m
+            memory: 600Mi
+         livenessProbe:
+           initialDelaySeconds: 20
+           tcpSocket:
+             port: 5432
+           timeoutSeconds: 1
+         ports:
+         - name: postgres-open
+           containerPort: 5432
+           hostPort: 5432
+         volumeMounts:
+         - name: postgres-data
+           mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-data-pvc

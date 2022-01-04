@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: jenkins
+  name: system:jenkins
+  namespace: jenkins
+rules:
+- apiGroups:
+  - "*"
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - get
+  - list
+  - watch
+  - delete
+  - create
+  - update

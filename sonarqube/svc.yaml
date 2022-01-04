@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: sonar
+  name: sonarqube-svc
+spec:
+  #clusterIP: 10.108.100.21
+  selector:
+    app: sonarqube
+  ports:
+  - name: sonarqube-http
+    targetPort: sonarqube-http
+    port: 9000
+    #nodePort: 30222
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: sonar
+  name: postgres-svc-headless
+spec:
+  clusterIP: None
+  selector:
+    app: postgres
+  ports:
+  - name: postgres
+    targetPort: postgres-open
+    port: 5432

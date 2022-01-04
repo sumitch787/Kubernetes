@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: sonar
+  name: sonarqube-data-pv
+  labels: 
+     app: sonarqube
+     purpose: codequality
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  hostPath:
+    path: "/home/ubuntu/data/sonarqube_data"
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  capacity:
+    storage: 5Gi
+  claimRef:
+    name: sonarqube-data-pvc
+    namespace: sonar
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: sonar
+  name: sonarqube-logs-pv
+  labels: 
+     app: sonarqube
+     purpose: codequality
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  hostPath:
+    path: "/home/ubuntu/data/sonarqube_logs"
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  capacity:
+    storage: 5Gi
+  claimRef:
+    name: sonarqube-logs-pvc
+    namespace: sonar
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: sonar
+  name: postgres-data-pv
+  labels: 
+     app: sonarqube
+     purpose: codequality
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  hostPath:
+    path: "/home/ubuntu/data/postgres_data"
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: slow
+  capacity:
+    storage: 5Gi
+  claimRef:
+    name: postgres-data-pvc
+    namespace: sonar
